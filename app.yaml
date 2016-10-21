@@ -1,0 +1,13 @@
+runtime: php55
+api_version: 1
+
+handlers:
+- url: /js
+  static_dir: public/js
+
+- url: /css
+  static_dir: public/css
+
+- url: /.*
+  script: public/index.php
+

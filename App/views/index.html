@@ -1,0 +1,39 @@
+<div class="form-group">
+    <h3>Word to word</h3>
+    <p>
+        Input the text, click words to pick their translations and adjust their forms.
+        This tool is useful if you are a native Slavic speaker.
+        Otherwise you may have hard times quickly fixing the cases and conjugations.
+    </p>
+
+    <div>
+        <label for="dynamic-in">English text:</label>
+        <textarea class="form-control" rows="5" id="dynamic-in">Hello, world!</textarea>
+    </div>
+
+    <div class="checkbox">
+        <label>
+            <input id="strict-comparison" type="checkbox" checked data-toggle="toggle">
+            Strict search
+        </label>
+    </div>
+
+    <div style="margin-top: 20px">
+        <label for="dynamic-in">Medžuslovjanski tekst:</label>
+        <div id="dynamic-out" class="img-rounded">
+            <div class="dynamic-word translated" data-mzs="zdrav" data-type="intj">zdrav</div>
+            <div class="dynamic-word translated" data-mzs="svět" data-type="m">svět</div>
+        </div>
+    </div>
+
+    <div id="translation-picker" class="dropdown clearfix">
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
+            <li><a tabindex="-1" href="#">Action</a></li>
+            <li><a tabindex="-1" href="#">Another action</a></li>
+            <li><a tabindex="-1" href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a tabindex="-1" href="#">Separated link</a></li>
+        </ul>
+    </div>
+</div>
+
