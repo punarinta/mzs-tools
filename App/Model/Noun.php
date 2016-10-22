@@ -18,6 +18,12 @@ class Noun
      */
     public static function morph($noun, $gender = 'm2')   // m2, m1, f, n
     {
+        if ($gender == 'm')
+        {
+            // make it inanimate if animacy is unknown
+            $gender = 'm2';
+        }
+
         self::$originalGender = $gender;
         $noun = str_replace(' ', '', $noun);
 
