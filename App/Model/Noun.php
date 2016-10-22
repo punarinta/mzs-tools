@@ -80,22 +80,22 @@ class Noun
         (
             'sg' => array
             (
-                $nom_sg,
-                $gen_sg,
-                $dat_sg,
-                $acc_sg,
-                $ins_sg,
-                $loc_sg,
-                $voc_sg,
+                'nom' => $nom_sg,
+                'gen' => $gen_sg,
+                'dat' => $dat_sg,
+                'acc' => $acc_sg,
+                'ins' => $ins_sg,
+                'loc' => $loc_sg,
+                'voc' => $voc_sg,
             ),
             'pl' => array
             (
-                $nom_pl,
-                $gen_pl,
-                $dat_pl,
-                $acc_pl,
-                $ins_pl,
-                $loc_pl,
+                'nom' => $nom_pl,
+                'gen' => $gen_pl,
+                'dat' => $dat_pl,
+                'acc' => $acc_pl,
+                'ins' => $ins_pl,
+                'loc' => $loc_pl,
             ),
         );
     }
