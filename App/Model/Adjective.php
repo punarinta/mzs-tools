@@ -8,7 +8,7 @@ class Adjective
     public static $liquid = ['l','r','ŕ'];
     public static $nasal = ['n','m'];
     
-    static function declension ($adj)
+    static function morph($adj)
     {
         $adj = str_replace(' ', '', $adj);
         if (mb_strlen($adj) == 0)
@@ -46,34 +46,6 @@ class Adjective
                 $comp_adv	= self::comparative_adv($root); $comp_adv = self::rules($comp_adv);
                 $sup_adj	= self::superlative($root, $comp_adj, 'adj'); $sup_adj = self::rules($sup_adj);
                 $sup_adv	= self::superlative($root, $comp_adv, 'adv'); $sup_adv = self::rules($sup_adv);
-
-                $result = '<table><tr><td><table class="border">';
-                $result .= '<tr align="center"><th rowspan="2" class="leeg"> </th><th colspan="3"> singular </th></tr>';
-                $result .= '<tr align="center"> <th> masculine </th><th> neuter </th><th> feminine </th></tr>';
-                $result .= '<tr align="center"><th> Nom </th><td>' . $m_nom_sg . '</td><td rowspan="2">' . $n_nom_sg . '</td><td>' . $f_nom_sg . '</td></tr>';
-                $result .= '<tr align="center"><th> Acc </th><td>' . $m_acc_sg . '</td><td>' . $f_acc_sg . '</td></tr>';
-                $result .= '<tr align="center"><th> Gen </th><td colspan="2">' . $mn_gen_sg . '</td><td>' . $f_gdl_sg . '</td></tr>';
-                $result .= '<tr align="center"><th> Dat </th><td colspan="2">' . $mn_dat_sg . '</td><td>' . $f_gdl_sg . '</td></tr>';
-                $result .= '<tr align="center"><th> Ins </th><td colspan="2">' . $mn_ins_sg . '</td><td>' . $f_ins_sg . '</td></tr>';
-                $result .= '<tr align="center"><th> Loc </th><td colspan="2">' . $mn_loc_sg . '</td><td>' . $f_gdl_sg . '</td></tr>';
-                $result .= '</table></td><td>&nbsp; &nbsp; &nbsp;</td><td><table class="border">';
-    
-                $result .= '<tr align="center"><th rowspan="2" class="leeg"> </th><th colspan="2"> plural </th></tr>';
-                $result .= '<tr align="center"> <th> masculine </th><th> feminine/neuter </th></tr>';
-                $result .= '<tr align="center"><th> Nom </th><td>' . $m_nom_pl . '</td><td rowspan="2">' . $fn_nom_pl . '</td></tr>';
-                $result .= '<tr align="center"><th> Acc </th><td>' . $m_acc_pl . '</td></tr>';
-                $result .= '<tr align="center"><th> Gen </th><td colspan="2">' . $glo_pl . '</td></tr>';
-                $result .= '<tr align="center"><th> Dat </th><td colspan="2">' . $dat_pl . '</td></tr>';
-                $result .= '<tr align="center"><th> Ins </th><td colspan="2">' . $ins_pl . '</td></tr>';
-                $result .= '<tr align="center"><th> Loc </th><td colspan="2">' . $glo_pl . '</td></tr>';
-                $result .= '</table></center></td><td><p style="margin-left:2em; text-align:left;"><u>Degrees of comparison</u>:<br />';
-                $result .= 'Positive (adjective): <b>' . $m_nom_sg . '</b><br />';
-                $result .= 'Positive (adverb): <b>' . $adv . '</b><br />';
-                $result .= 'Comparative (adjective): <b>' . $comp_adj . '</b><br />';
-                $result .= 'Comparative (adverb): <b>' . $comp_adv . '</b><br />';
-                $result .= 'Superlative (adjective): <b>' . $sup_adj . '</b><br />';
-                $result .= 'Superlative (adverb): <b>' . $sup_adv . '</b><br />';
-                $result .= '</p></td></tr></table>';
             }
         }
 
@@ -139,6 +111,11 @@ class Adjective
                     $glo_pl,
                 ),
             ),
+            'comp' => $comp_adj,
+            'sup' => $sup_adj,
+            'adv' => $adv,
+            'adv_comp' => $comp_adv,
+            'adv_sup' => $sup_adv,
         );
     }
 
