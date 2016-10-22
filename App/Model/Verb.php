@@ -2,74 +2,56 @@
 
 namespace App\Model;
 
+/**
+ * Class Verb
+ * @package App\Model
+ */
 class Verb
 {
-    public static $vowel = ['a','å','e','ě','ę','i','o','ò','u','ų','y'];
-    public static $liquid = ['l','r','ŕ'];
-    public static $nasal = ['n','m'];
-    
-    static public function morph ($inf, $pts = '')
+    protected static $vowel = ['a','å','e','ě','ę','i','o','ò','u','ų','y'];
+
+    /**
+     * @param $inf
+     * @param string $pts
+     * @return array
+     */
+    public static function morph($inf, $pts = '')
     {
         $refl		= self::reflexive($inf);
         $pref		= self::prefix($inf);
         $is 		= self::infinitive_stem($pref, $inf);
-        if ($is == "ERROR-1")
-        {
-            // no input
-        }
-        else if ($is == "ERROR-2")
-        {
-            // illegal form
-        }
 
         $ps 		= self::present_tense_stem ($pref, $pts, $is);
-        $psi 		= self::secondary_present_tense_stem ($ps);
-        $lpa		= self::l_participle ($pref, $is);
-        $infinitive = self::build_infinitive ($pref, $is, $refl);
-        $present	= self::build_present ($pref, $ps, $psi, $refl);
-        $imperfect	= self::build_imperfect ($pref, $is, $refl);
-        $perfect	= self::build_perfect ($lpa, $refl);
-        $pluperfect	= self::build_pluperfect ($lpa, $refl);
-        $future		= self::build_future ($infinitive, $ps);
-        $conditional= self::build_conditional ($lpa, $refl);
-        $imperative	= self::build_imperative ($pref, $psi, $refl);
-        $prap		= self::build_prap ($pref, $ps, $refl);
-        $prpp		= self::build_prpp ($pref, $ps, $psi);
-        $pfap		= self::build_pfap ($lpa, $refl);
-        $pfpp		= self::build_pfpp ($pref, $is, $psi);
-        $gerund		= self::build_gerund ($pfpp, $refl);
+        $psi 		= self::secondary_present_tense_stem($ps);
+        $lpa		= self::l_participle($pref, $is);
+        $infinitive = self::build_infinitive($pref, $is, $refl);
+        $pfpp		= self::build_pfpp($pref, $is, $psi);
 
-        $result = '<table class="border" style="font-family:ms sans serif; font-size:10pt;">';
-        $result .= '<tr><th class="leeg" width="50px" colspan="2"> </th><th> present </th><th> imperfect </th><th> future </th>';
-        $result .= '</tr><tr>';
-        $result .= '<th> 1sg <br> 2sg <br> 3sg <br><br> 1pl <br> 2pl <br> 3pl </th>';
-        $result .= self::transliterate_back ('<td align="center"> ja <br> ty <br> on/ona/ono <br><br> my <br> vy <br> oni </td>');
-        $result .= '	<td>' . $present . '</td>';
-        $result .= '	<td>' . $imperfect . '</td>';
-        $result .= '	<td>' . $future . '</td>';
-        $result .= '</tr><tr>';
-        $result .= '	<th class="leeg" colspan="2"> </th><th> perfect </th><th> pluperfect </th><th> conditional </th>';
-        $result .= '</tr><tr>';
-        $result .= '	<th> 1sg <br> 2sg <br> 3sg <br><br><br><br> 1pl <br> 2pl <br> 3pl </th>';
-        $result .= self::transliterate_back ('<td align="center"> ja <br> ty <br> on <br> ona <br> ono <br><br> my <br> vy <br> oni </td>');
-        $result .= '	<td>' . $perfect . '</td>';
-        $result .= '	<td>' . $pluperfect . '</td>';
-        $result .= '	<td>' . $conditional . '</td>';
-        $result .= '</tr></table><br>';
-        $result .= '<table class="border" style="font-family:ms sans serif; font-size:10pt;">';
-        $result .= '	<tr><th> $infinitive </th><td>' . $infinitive . '</td>';
-        $result .= '	<tr><th> imperative </th><td>' . $imperative . '</td>';
-        $result .= '	<tr><th> present active participle </th><td>' . $prap . '</td>';
-        $result .= '	<tr><th> present passive participle </th><td>' . $prpp . '</td>';
-        $result .= '	<tr><th> past active participle </th><td>' . $pfap . '</td>';
-        $result .= '	<tr><th> past passive participle </th><td>' . $pfpp . '</td>';
-        $result .= '	<tr><th> verbal&nbsp;noun </th><td>' . $gerund . '</td>';
-        $result .= '</tr></table>';
-
-        return $result;
+        return array
+        (
+            'pres'      => explode('#', self::build_present($pref, $ps, $psi, $refl)),
+            'imperf'    => explode('#', self::build_imperfect($pref, $is, $refl)),
+            'fut'       => explode('#', self::build_future($infinitive, $ps)),
+            'perf'      => explode('#', self::build_perfect($lpa, $refl)),
+            'ppf'       => explode('#', self::build_pluperfect($lpa, $refl)),
+            'cond'      => explode('#', self::build_conditional($lpa, $refl)),
+            'imp'       => self::build_imperative($pref, $psi, $refl),
+            'noun'      => self::build_gerund($pfpp, $refl),
+            'part'      => array
+            (
+                self::build_prap($pref, $ps, $refl),
+                self::build_prpp($pref, $ps, $psi),
+                self::build_pfap($lpa, $refl),
+                $pfpp,
+            ),
+        );
     }
 
-    static public function reflexive($inf)
+    /**
+     * @param $inf
+     * @return string
+     */
+    protected static function reflexive($inf)
     {
         if (mb_strrpos($inf, 'se') == mb_strlen($inf) - 2 || mb_strrpos($inf, 'sę') == mb_strlen($inf) - 2 ||
             mb_strpos($inf, 'se ') === 0 || mb_strpos($inf, 'sę ') === 0)
@@ -84,7 +66,11 @@ class Verb
         return $result;
     }
 
-    static public function prefix ($inf)
+    /**
+     * @param $inf
+     * @return string
+     */
+    protected static function prefix($inf)
     {
         $result = '';
         $kreska = mb_strpos($inf, '-');
@@ -93,36 +79,23 @@ class Verb
         {	
             $result = self::substring($inf, 0, $kreska + 1);	
         }
-        /*	else if (($inf.substring (0, 4) == 'pred') || ($inf.substring (0, 4) == 'prėd'))
-                {	$result = $inf.substring (0, 4); 	}
-            else if (($inf.substring (0, 3) == 'pre') || ($inf.substring (0, 3) == 'prė'))
-                {	$result = $inf.substring (0, 3); 	}
-            else if (($inf.substring (0, 3) == 'pri') || ($inf.substring (0, 3) == 'pro'))
-                {	$result = $inf.substring (0, 3); 	}
-            else if (($inf.substring (0, 3) == 'raz') || ($inf.substring (0, 3) == 'råz'))
-                {	$result = $inf.substring (0, 3); 	}
-            else if (($inf.substring (0, 3) == 'pod') || ($inf.substring (0, 3) == 'nad'))
-                {	$result = $inf.substring (0, 3); 	}
-            else if (($inf.substring (0, 2) == 'po') || ($inf.substring (0, 2) == 'na'))
-                {	$result = $inf.substring (0, 2); 	}
-            else if (($inf.substring (0, 2) == 'do') || ($inf.substring (0, 2) == 'za'))
-                {	$result = $inf.substring (0, 2); 	}
-            else if (($inf.substring (0, 2) == 'iz') || ($inf.substring (0, 2) == 'od'))
-                {	$result = $inf.substring (0, 2); 	}
-            else if (($inf.substring (0, 2) == 'vy') || ($inf.substring (0, 2) == 'ob'))
-                {	$result = $inf.substring (0, 2); 	}
-        */
+
         return $result;
     }
 
-    static public function infinitive_stem($pref, $inf)
+    /**
+     * @param $pref
+     * @param $inf
+     * @return mixed|string
+     * @throws \Exception
+     */
+    protected static function infinitive_stem($pref, $inf)
     {
         $inf = str_replace($pref, '', $inf);
     
         if (mb_strlen($inf) == 0)
         {
-            $result = 'ERROR-1';
-            return $result;
+            throw new \Exception('Empty input');
         }
         else if (mb_strrpos($inf, 'se') == mb_strlen($inf) - 2 || mb_strrpos($inf, 'sę') == mb_strlen($inf) - 2)
         {
@@ -139,8 +112,7 @@ class Verb
     
         if ($trunc == '')
         {
-            $result = 'ERROR-2';
-            return $result;
+            throw new \Exception('Illegal verb');
         }
     
         if (mb_strrpos($trunc, 'ti') == mb_strlen($trunc) - 2 || mb_strrpos($trunc, 'tì') == mb_strlen($trunc) - 2)
@@ -153,12 +125,13 @@ class Verb
         }
         else
         {
-            $result = 'ERROR-2';
+            throw new \Exception('Illegal verb');
         }
 
         if (mb_strrpos($result, 's') == mb_strlen($result) - 1)
         {
             $result = self::substring($result, 0, mb_strlen($result) - 1) . 'd';
+
             if ($result == 'ned') 						
             {
                 $result = 'nes'; 
@@ -188,7 +161,13 @@ class Verb
         return $result;
     }
 
-    static public function present_tense_stem ($pref, $pts, $is)
+    /**
+     * @param $pref
+     * @param $pts
+     * @param $is
+     * @return string
+     */
+    protected static function present_tense_stem($pref, $pts, $is)
     {
         $result = $is;
     
@@ -325,7 +304,11 @@ class Verb
         return $result;
     }
 
-    static public function secondary_present_tense_stem ($ps)
+    /**
+     * @param $ps
+     * @return string
+     */
+    protected static function secondary_present_tense_stem($ps)
     {
         $i = mb_strlen($ps) - 1;
         if (mb_substr($ps, $i, 1) == 'g')
@@ -344,7 +327,12 @@ class Verb
         return $result;
     }
 
-    static public function l_participle ($pref, $is)
+    /**
+     * @param $pref
+     * @param $is
+     * @return string
+     */
+    protected static function l_participle($pref, $is)
     {
         if ($is == 'vojd' || $is == 'vòjd')
         { 
@@ -367,7 +355,13 @@ class Verb
         return $result;
     }
 
-    static public function build_infinitive ($pref, $is, $refl)
+    /**
+     * @param $pref
+     * @param $is
+     * @param $refl
+     * @return mixed
+     */
+    protected static function build_infinitive($pref, $is, $refl)
     {
         if (mb_strrpos($is, 't') == mb_strlen($is) - 1)
         {
@@ -391,69 +385,82 @@ class Verb
         return self::transliterate_back ($result);
     }
 
-    static public function build_present ($pref, $ps, $psi, $refl)
+    /**
+     * @param $pref
+     * @param $ps
+     * @param $psi
+     * @param $refl
+     * @return mixed
+     */
+    protected static function build_present($pref, $ps, $psi, $refl)
     {
         $i = mb_strlen($ps) - 1;
     
         if ($ps == 'jes')
         {
-            $result = 'jesm<br>jesi<br>jest (je)<br><br>jesmò<br>jeste<br>sųt';
+            $result = 'jesm#jesi#jest (je)##jesmò#jeste#sųt';
         }
         else if ($ps == 'da')
         {
-            $result = $pref . 'dam<br>' . $pref . 'daš<br>' . $pref . 'da<br><br>' . $pref . 'damò<br>' . $pref . 'date<br>' . $pref . 'dadųt';
+            $result = $pref . 'dam#' . $pref . 'daš#' . $pref . 'da#' . $pref . 'damò#' . $pref . 'date#' . $pref . 'dadųt';
         }
         else if ($ps == 'vě')
         {
-            $result = $pref . 'věm<br>' . $pref . 'věš<br>' . $pref . 'vě<br><br>' . $pref . 'věmò<br>' . $pref . 'věte<br>' . $pref . 'vědųt';
+            $result = $pref . 'věm#' . $pref . 'věš#' . $pref . 'vě#' . $pref . 'věmò#' . $pref . 'věte#' . $pref . 'vědųt';
         }
         else if ($ps == 'jě')
         {
-            $result = $pref . 'jěm<br>' . $pref . 'jěš<br>' . $pref . 'jě<br><br>' . $pref . 'jěmò<br>' . $pref . 'jěte<br>' . $pref . 'jědųt';
+            $result = $pref . 'jěm#' . $pref . 'jěš#' . $pref . 'jě#' . $pref . 'jěmò#' . $pref . 'jěte#' . $pref . 'jědųt';
         }
         else if ($ps == 'je')
         {
-            $result = $pref . 'jem<br>' . $pref . 'ješ<br>' . $pref . 'je<br><br>' . $pref . 'jemò<br>' . $pref . 'jete<br>' . $pref . 'jedųt';
+            $result = $pref . 'jem#' . $pref . 'ješ#' . $pref . 'je#' . $pref . 'jemò#' . $pref . 'jete#' . $pref . 'jedųt';
         }
         else if ($ps == 'ja')
         {
-            $result = $pref . 'jam<br>' . $pref . 'jaš<br>' . $pref . 'ja<br><br>' . $pref . 'jamò<br>' . $pref . 'jate<br>' . $pref . 'jadųt';
+            $result = $pref . 'jam#' . $pref . 'jaš#' . $pref . 'ja#' . $pref . 'jamò#' . $pref . 'jate#' . $pref . 'jadųt';
         }
         else if (mb_substr($ps, $i, 1) == 'ĵ')
         {
             $cut = self::substring($ps, 0, mb_strlen($ps) - 1);
             $ps = $cut . 'j';
-            $result = $pref . $ps . 'ų' . $refl . ', ' . $pref . $cut . 'm' . $refl . '<br>';
-            $result = $result . $pref . $ps . 'eš' . $refl . ', ' . $pref . $cut . 'š' . $refl . '<br>';
-            $result = $result . $pref . $ps . 'e' . $refl . ', ' . $pref . $cut . $refl . '<br><br>';
-            $result = $result . $pref . $ps . 'emò' . $refl . ', ' . $pref . $cut . 'mo' . $refl . '<br>';
-            $result = $result . $pref . $ps . 'ete' . $refl . ', ' . $pref . $cut . 'te' . $refl . '<br>';
-            $result = $result . $pref . $ps . 'ųt' . $refl;
+            $result = $pref . $ps . 'ų' . $refl . ', ' . $pref . $cut . 'm' . $refl . '#';
+            $result .= $pref . $ps . 'eš' . $refl . ', ' . $pref . $cut . 'š' . $refl . '#';
+            $result .= $pref . $ps . 'e' . $refl . ', ' . $pref . $cut . $refl . '#';
+            $result .= $pref . $ps . 'emò' . $refl . ', ' . $pref . $cut . 'mo' . $refl . '#';
+            $result .= $pref . $ps . 'ete' . $refl . ', ' . $pref . $cut . 'te' . $refl . '#';
+            $result .= $pref . $ps . 'ųt' . $refl;
         }
         else if (mb_substr($ps, $i, 1) == 'i')
         {
             $cut = self::substring($ps, 0, mb_strlen($ps) - 1);
-            $result = $pref . $cut . 'xų' . $refl . ', ' . $pref . $ps . 'm' . $refl . '<br>';
-            $result = $result . $pref . $ps . 'š' . $refl . '<br>';
-            $result = $result . $pref . $ps . $refl . '<br><br>';
-            $result = $result . $pref . $ps . 'mò' . $refl . '<br>';
-            $result = $result . $pref . $ps . 'te' . $refl . '<br>';
-            $result = $result . $pref . $cut . 'ęt' . $refl . ', ' . $ps . 'jųt' . $refl;
+            $result = $pref . $cut . 'xų' . $refl . ', ' . $pref . $ps . 'm' . $refl . '#';
+            $result .= $pref . $ps . 'š' . $refl . '#';
+            $result .= $pref . $ps . $refl . '#';
+            $result .= $pref . $ps . 'mò' . $refl . '#';
+            $result .= $pref . $ps . 'te' . $refl . '#';
+            $result .= $pref . $cut . 'ęt' . $refl . ', ' . $ps . 'jųt' . $refl;
         }
         else
         {
-            $result = $pref . $ps . 'ų' . $refl . '<br>';
-            $result = $result . $pref . $psi . 'eš' . $refl . '<br>';
-            $result = $result . $pref . $psi . 'e' . $refl . '<br><br>';
-            $result = $result . $pref . $psi . 'emò' . $refl . '<br>';
-            $result = $result . $pref . $psi . 'ete' . $refl . '<br>';
-            $result = $result . $pref . $ps . 'ųt' . $refl . '<br>';
+            $result = $pref . $ps . 'ų' . $refl . '#';
+            $result .= $pref . $psi . 'eš' . $refl . '#';
+            $result .= $pref . $psi . 'e' . $refl . '#';
+            $result .= $pref . $psi . 'emò' . $refl . '#';
+            $result .= $pref . $psi . 'ete' . $refl . '#';
+            $result .= $pref . $ps . 'ųt' . $refl . '#';
         }
-        $result = self::transliterate_back ($result);
-        return $result;
+
+        return self::transliterate_back($result);
     }
 
-    static public function build_imperfect ($pref, $is, $refl)
+    /**
+     * @param $pref
+     * @param $is
+     * @param $refl
+     * @return mixed
+     */
+    protected static function build_imperfect($pref, $is, $refl)
     {
         $i = mb_strlen($is) - 1;
 
@@ -481,17 +488,22 @@ class Verb
             $impst = $is;
         }
     
-        $result = $pref . $impst . 'h' . $refl . '<br>';
-        $result = $result . $pref . $impst . 'še' . $refl . '<br>';
-        $result = $result . $pref . $impst . 'še' . $refl . '<br><br>';
-        $result = $result . $pref . $impst . 'hmò' . $refl . '<br>';
-        $result = $result . $pref . $impst . 'ste' . $refl . '<br>';
+        $result = $pref . $impst . 'h' . $refl . '#';
+        $result = $result . $pref . $impst . 'še' . $refl . '#';
+        $result = $result . $pref . $impst . 'še' . $refl . '#';
+        $result = $result . $pref . $impst . 'hmò' . $refl . '#';
+        $result = $result . $pref . $impst . 'ste' . $refl . '#';
         $result = $result . $pref . $impst . 'hų' . $refl;
     
-        return self::transliterate_back ($result);
+        return self::transliterate_back($result);
     }
 
-    static public function build_future ($infinitive, $ps)
+    /**
+     * @param $infinitive
+     * @param $ps
+     * @return mixed
+     */
+    protected static function build_future($infinitive, $ps)
     {
         if (($infinitive == 'biti' && ($ps == 'j' || $ps == 'je' || $ps == 'jes'))
             || $infinitive == 'byti' || $infinitive == 'bytì')
@@ -499,74 +511,95 @@ class Verb
             $infinitive = ''; 
         }
     
-        $result = 'bųdų ' . $infinitive . '<br>';
-        $result = $result . 'bųdeš ' . $infinitive . '<br>';
-        $result = $result . 'bųde ' . $infinitive . '<br><br>';
-        $result = $result . 'bųdemò ' . $infinitive . '<br>';
-        $result = $result . 'bųdete ' . $infinitive . '<br>';
+        $result = 'bųdų ' . $infinitive . '#';
+        $result = $result . 'bųdeš ' . $infinitive . '#';
+        $result = $result . 'bųde ' . $infinitive . '#';
+        $result = $result . 'bųdemò ' . $infinitive . '#';
+        $result = $result . 'bųdete ' . $infinitive . '#';
         $result = $result . 'bųdųt ' . $infinitive;
 
-        return self::transliterate_back ($result);
+        return self::transliterate_back($result);
     }
 
-    static public function build_perfect ($lpa, $refl)
+    /**
+     * @param $lpa
+     * @param $refl
+     * @return mixed
+     */
+    protected static function build_perfect($lpa, $refl)
     {
-        $result = '(jesm) ' . $lpa . '(a)' . $refl . '<br>';
-        $result = $result . '(jesi) ' . $lpa . '(a)' . $refl . '<br>';
-        $result = $result . '(jest) ' . $lpa . $refl . '<br>';
-        $result = $result . '(jest) ' . $lpa . 'a' . $refl . '<br>';
-        $result = $result . '(jest) ' . $lpa . 'o' . $refl . '<br><br>';
-        $result = $result . '(jesmò) ' . $lpa . 'i' . $refl . '<br>';
-        $result = $result . '(jeste) ' . $lpa . 'i' . $refl . '<br>';
-        $result = $result . '(sųt) ' . $lpa . 'i' . $refl . '<br>';
+        $result = '(jesm) ' . $lpa . '(a)' . $refl . '#';
+        $result = $result . '(jesi) ' . $lpa . '(a)' . $refl . '#';
+        $result = $result . '(jest) ' . $lpa . $refl . '#';
+        $result = $result . '(jest) ' . $lpa . 'a' . $refl . '#';
+        $result = $result . '(jest) ' . $lpa . 'o' . $refl . '#';
+        $result = $result . '(jesmò) ' . $lpa . 'i' . $refl . '#';
+        $result = $result . '(jeste) ' . $lpa . 'i' . $refl . '#';
+        $result = $result . '(sųt) ' . $lpa . 'i' . $refl;
 
         if (mb_strpos($result, 'šèl') !== false)
         {
             $result = self::idti($result);
         }
 
-        return self::transliterate_back ($result);
+        return self::transliterate_back($result);
     }
 
-    static public function build_pluperfect($lpa, $refl)
+    /**
+     * @param $lpa
+     * @param $refl
+     * @return mixed
+     */
+    protected static function build_pluperfect($lpa, $refl)
     {
-        $result = '(běh) ' . $lpa . '(a)' . $refl . '<br>';
-        $result = $result . '(běše) ' . $lpa . '(a)' . $refl . '<br>';
-        $result = $result . '(běše) ' . $lpa . $refl . '<br>';
-        $result = $result . '(běše) ' . $lpa . 'a' . $refl . '<br>';
-        $result = $result . '(běše) ' . $lpa . 'o' . $refl . '<br><br>';
-        $result = $result . '(běhmo) ' . $lpa . 'i' . $refl . '<br>';
-        $result = $result . '(běste) ' . $lpa . 'i' . $refl . '<br>';
-        $result = $result . '(běhų) ' . $lpa . 'i' . $refl . '<br>';
+        $result = '(běh) ' . $lpa . '(a)' . $refl . '#';
+        $result = $result . '(běše) ' . $lpa . '(a)' . $refl . '#';
+        $result = $result . '(běše) ' . $lpa . $refl . '#';
+        $result = $result . '(běše) ' . $lpa . 'a' . $refl . '#';
+        $result = $result . '(běše) ' . $lpa . 'o' . $refl . '#';
+        $result = $result . '(běhmo) ' . $lpa . 'i' . $refl . '#';
+        $result = $result . '(běste) ' . $lpa . 'i' . $refl . '#';
+        $result = $result . '(běhų) ' . $lpa . 'i' . $refl;
 
         if (mb_strpos($result, 'šèl') !== false)
         {
             $result = self::idti($result);
         }
 
-        return self::transliterate_back ($result);
+        return self::transliterate_back($result);
     }
 
-    static public function build_conditional ($lpa, $refl)
+    /**
+     * @param $lpa
+     * @param $refl
+     * @return mixed
+     */
+    protected static function build_conditional($lpa, $refl)
     {
-        $result = 'by(h) ' . $lpa . '(a)' . $refl . '<br>';
-        $result = $result . 'by(s) ' . $lpa . '(a)' . $refl . '<br>';
-        $result = $result . 'by ' . $lpa . $refl . '<br>';
-        $result = $result . 'by ' . $lpa . 'a' . $refl . '<br>';
-        $result = $result . 'by ' . $lpa . 'o' . $refl . '<br><br>';
-        $result = $result . 'by(hmò) ' . $lpa . 'i' . $refl . '<br>';
-        $result = $result . 'by(ste) ' . $lpa . 'i' . $refl . '<br>';
-        $result = $result . 'by ' . $lpa . 'i' . $refl . '<br>';
+        $result = 'by(h) ' . $lpa . '(a)' . $refl . '#';
+        $result = $result . 'by(s) ' . $lpa . '(a)' . $refl . '#';
+        $result = $result . 'by ' . $lpa . $refl . '#';
+        $result = $result . 'by ' . $lpa . 'a' . $refl . '#';
+        $result = $result . 'by ' . $lpa . 'o' . $refl . '#';
+        $result = $result . 'by(hmò) ' . $lpa . 'i' . $refl . '#';
+        $result = $result . 'by(ste) ' . $lpa . 'i' . $refl . '#';
+        $result = $result . 'by ' . $lpa . 'i' . $refl;
     
         if (mb_strpos($result, 'šèl') !== false)
         {
             $result = self::idti($result); 
         }
 
-        return self::transliterate_back ($result);
+        return self::transliterate_back($result);
     }
 
-    static public function build_imperative ($pref, $ps, $refl)
+    /**
+     * @param $pref
+     * @param $ps
+     * @param $refl
+     * @return mixed
+     */
+    protected static function build_imperative($pref, $ps, $refl)
     {
         $i = mb_strlen($ps) - 1;
     
@@ -614,10 +647,16 @@ class Verb
         $result = $p2s . $refl . ', ' . $p2s . 'mò' . $refl . ', ' . $p2s . 'te' . $refl;
         $result = str_replace ('jij', 'j', $result); $result = str_replace ('ĵij','ĵ', $result);
 
-        return self::transliterate_back ($result);
+        return self::transliterate_back($result);
     }
 
-    static public function build_prap ($pref, $ps, $refl)
+    /**
+     * @param $pref
+     * @param $ps
+     * @param $refl
+     * @return mixed
+     */
+    protected static function build_prap($pref, $ps, $refl)
     {
         $i = mb_strlen($ps) - 1;
     
@@ -662,10 +701,16 @@ class Verb
     
         $result = $ps . 'ćí (' . $ps . 'ćá, ' . $ps . 'ćé)' . $refl;
 
-        return self::transliterate_back ($result);
+        return self::transliterate_back($result);
     }
 
-    static public function build_prpp ($pref, $ps, $psi)
+    /**
+     * @param $pref
+     * @param $ps
+     * @param $psi
+     * @return mixed
+     */
+    protected static function build_prpp($pref, $ps, $psi)
     {
         $result = '';
     
@@ -720,10 +765,15 @@ class Verb
             $result = $pref . $psi . 'emý (' . $pref . $psi . 'emá, ' . $pref . $psi . 'emœ)';
         }
 
-        return self::transliterate_back ($result);
+        return self::transliterate_back($result);
     }
 
-    static public function build_pfap ($lpa, $refl)
+    /**
+     * @param $lpa
+     * @param $refl
+     * @return mixed
+     */
+    protected static function build_pfap($lpa, $refl)
     {
         if (in_array(mb_substr($lpa, mb_strlen($lpa) - 2, 1), self::$vowel) == false)
         {
@@ -742,7 +792,13 @@ class Verb
         return self::transliterate_back($result);
     }
 
-    static public function build_pfpp ($pref, $is, $psi)
+    /**
+     * @param $pref
+     * @param $is
+     * @param $psi
+     * @return mixed
+     */
+    protected static function build_pfpp($pref, $is, $psi)
     {
         $i = mb_strlen($is) - 1;
 
@@ -791,10 +847,15 @@ class Verb
         }
         $result = $ppps . 'ý (' . $ppps . 'á, ' . $ppps . 'ó)';
 
-        return self::transliterate_back ($result);
+        return self::transliterate_back($result);
     }
 
-    static public function build_gerund($pfpp, $refl)
+    /**
+     * @param $pfpp
+     * @param $refl
+     * @return mixed
+     */
+    protected static function build_gerund($pfpp, $refl)
     {
         $ppps = mb_strpos($pfpp, '(') - 2;
         $result = self::substring($pfpp, 0, $ppps) . 'ıje' . $refl;
@@ -802,7 +863,11 @@ class Verb
         return self::transliterate_back($result);
     }
 
-    static public function idti ($sel)
+    /**
+     * @param $sel
+     * @return mixed
+     */
+    protected static function idti($sel)
     {
         $sel = str_replace('šèl(a)', 'šèl/šla', $sel);
         $sel = str_replace('šèl(a)', 'šèl/šla', $sel);
@@ -821,7 +886,11 @@ class Verb
         return $sel;
     }
 
-    static public function transliterate_back($iW)
+    /**
+     * @param $iW
+     * @return mixed
+     */
+    protected static function transliterate_back($iW)
     {
         $iW = str_replace('stx','šć', $iW); $iW = str_replace('zdx','ždź', $iW);
         $iW = str_replace('sx','š', $iW); $iW = str_replace('šx','š', $iW); $iW = str_replace('zx','ž', $iW); $iW = str_replace('žx','ž', $iW);
@@ -831,7 +900,13 @@ class Verb
         return str_replace('-', '', $iW);
     }
 
-    public static function substring($str, $from = 0, $to = false)
+    /**
+     * @param $str
+     * @param int $from
+     * @param bool $to
+     * @return string
+     */
+    protected static function substring($str, $from = 0, $to = false)
     {
         if ($to !== false)
         {
@@ -854,6 +929,7 @@ class Verb
         }
 
         $substring = $to === false ? mb_substr($str, $from) : mb_substr($str, $from, $to - $from);
+        
         return ($substring === false) ? '' : $substring;
     }
 }

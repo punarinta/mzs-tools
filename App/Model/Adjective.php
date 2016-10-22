@@ -2,25 +2,35 @@
 
 namespace App\Model;
 
+/**
+ * Class Adjective
+ * @package App\Model
+ */
 class Adjective
 {
-    public static $vowel = ['a','å','e','ě','ę','i','o','ò','u','ų','y'];
-    public static $liquid = ['l','r','ŕ'];
-    public static $nasal = ['n','m'];
-    
-    static function morph($adj)
+    protected static $nasal = ['n','m'];
+    protected static $liquid = ['l','r','ŕ'];
+    protected static $vowel = ['a','å','e','ě','ę','i','o','ò','u','ų','y'];
+
+    /**
+     * @param $adj
+     * @return array
+     * @throws \Exception
+     */
+    public static function morph($adj)
     {
         $adj = str_replace(' ', '', $adj);
+
         if (mb_strlen($adj) == 0)
         {
-            throw new \Exception('boo');
+            throw new \Exception('Empty input');
         }
         else
         {
             $root = self::establish_root($adj);
             if (mb_strlen($root) == 0)
             {
-                throw new \Exception('boo');
+                throw new \Exception('Invalid input');
             }
             else
             {
@@ -119,7 +129,11 @@ class Adjective
         );
     }
 
-    static function establish_root($adj)
+    /**
+     * @param $adj
+     * @return string
+     */
+    protected static function establish_root($adj)
     {
         if (($adj == 'naš') || ($adj == 'vaš'))
         {
@@ -192,7 +206,12 @@ class Adjective
         return $result;
     }
 
-    static function m_nominative_sg($adj, $root)
+    /**
+     * @param $adj
+     * @param $root
+     * @return string
+     */
+    protected static function m_nominative_sg($adj, $root)
     {
         if (mb_strpos($root, '|') !== false)
         {
@@ -205,96 +224,189 @@ class Adjective
         return $result;
     }
 
+    /**
+     * @param $root
+     * @return string
+     */
     static public function f_nominative_sg($root)
     {
         return $root . 'a';
     }
 
-    static function n_nominative_sg($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function n_nominative_sg($root)
     {
         return $root . 'o';
     }
 
-    static function mn_genitive_sg($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function mn_genitive_sg($root)
     {
         return $root . 'ogo';
     }
 
-    static function mn_dative_sg ($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function mn_dative_sg ($root)
     {
         return $root . 'omu';
     }
 
-    static function m_accusative_sg($adj, $root)
+    /**
+     * @param $adj
+     * @param $root
+     * @return string
+     */
+    protected static function m_accusative_sg($adj, $root)
     {
         return $root . 'ogo/' . $adj;
     }
 
-    static function mn_instrumental_sg($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function mn_instrumental_sg($root)
     {
         return $root . 'ym';
     }
 
-    static function mn_locative_sg($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function mn_locative_sg($root)
     {
         return $root . 'om';
     }
 
-    static function f_accusative_sg($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function f_accusative_sg($root)
     {
         return $root . 'ų';
     }
 
-    static function f_gendatloc_sg($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function f_gendatloc_sg($root)
     {
         return $root . 'oj';
     }
 
-    static function f_instrumental_sg($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function f_instrumental_sg($root)
     {
         return $root . 'ojų';
     }
 
-    static function m_nominative_pl($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function m_nominative_pl($root)
     {
         return $root . 'i/' . $root . 'e';
     }
 
-    static function m_accusative_pl($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function m_accusative_pl($root)
     {
         return $root . 'yh/' . $root . 'e';
     }
 
-    static function fn_nominative_pl($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function fn_nominative_pl($root)
     {
         return $root . 'e';
     }
 
-    static function genloc_pl($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function genloc_pl($root)
     {	
         $result = $root . 'yh';
-        if ( $root == 'vs|^' ) { $result .= ' (' . 'vsěh)'; }
-        if ( $root == 't|' ) { $result .= ' (' . 'těh)'; }
+
+        if ($root == 'vs|^')
+        {
+            $result .= ' (' . 'vsěh)';
+        }
+        if ( $root == 't|')
+        {
+            $result .= ' (' . 'těh)';
+        }
+
         return $result;
     }
 
-    static function dative_pl($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function dative_pl($root)
     {
         $result = $root . 'ym';
-        if ( $root == 'vs|^' ) { $result .= ' (' . 'vsěm)'; }
-        if ( $root == 't|' ) { $result .= ' (' . 'těm)'; }
+
+        if ($root == 'vs|^')
+        {
+            $result .= ' (' . 'vsěm)';
+        }
+        if ($root == 't|')
+        {
+            $result .= ' (' . 'těm)';
+        }
+
         return $result;
     }
 
-    static function instrumental_pl($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function instrumental_pl($root)
     {
         $result = $root . 'ymi';
-        if ( $root == 'vs|^' ) { $result .= ' (' . 'vsěmi)'; }
-        if ( $root == 't|' ) { $result .= ' (' . 'těmi)'; }
+
+        if ($root == 'vs|^')
+        {
+            $result .= ' (' . 'vsěmi)';
+        }
+        if ($root == 't|')
+        {
+            $result .= ' (' . 'těmi)';
+        }
+
         return $result;
     }
 
-    static function adverb($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function adverb($root)
     {
         if (mb_substr($root, mb_strlen($root) - 2, 1) == 'ć')
         {
@@ -304,10 +416,15 @@ class Adjective
         {
             $result = $root . '#o';
         }
+
         return $result;
     }
 
-    static function comparative_adj($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function comparative_adj($root)
     {
         if (mb_strpos($root, '^') !== false)
         {
@@ -318,53 +435,58 @@ class Adjective
             $lastchar = mb_strlen($root) - 1;
         }
     
-        if ($root == "velik")		{ $result = "vęčši"; }
-        else if ($root == "mal")	{ $result = "menši"; }
-        else if ($root == "dobr")	{ $result = "lěpši, lučši"; }
-        else if ($root == "zl")		{ $result = "gorši"; }
-        else if ($root == "mnog")	{ $result = "boľši"; }
-        else if (mb_strrpos($root, "sk") == mb_strlen($root) - 2)
+        if ($root == 'velik')		{ $result = 'vęčši'; }
+        else if ($root == 'mal')	{ $result = 'menši'; }
+        else if ($root == 'dobr')	{ $result = 'lěpši, lučši'; }
+        else if ($root == 'zl')		{ $result = 'gorši'; }
+        else if ($root == 'mnog')	{ $result = 'boľši'; }
+        else if (mb_strrpos($root, 'sk') == mb_strlen($root) - 2)
         {
-            $result = "bolje " . $root . "i";
+            $result = 'bolje ' . $root . 'i';
         }
-        else if (mb_strrpos($root, "ok") == mb_strlen($root) - 2 || mb_strrpos($root, "ek") == mb_strlen($root) - 2)
+        else if (mb_strrpos($root, 'ok') == mb_strlen($root) - 2 || mb_strrpos($root, 'ek') == mb_strlen($root) - 2)
         {
-            $result = self::substring($root, 0, mb_strlen($root) - 2) . "ši";
+            $result = self::substring($root, 0, mb_strlen($root) - 2) . 'ši';
         }
-        else if (mb_strrpos($root, "k") == mb_strlen($root) - 1 && in_array(mb_substr($root, $lastchar - 1, 1), self::$vowel) == false)
+        else if (mb_strrpos($root, 'k') == mb_strlen($root) - 1 && in_array(mb_substr($root, $lastchar - 1, 1), self::$vowel) == false)
         {
-            $result = self::substring ($root, 0, mb_strlen($root) - 1) . "ši";
+            $result = self::substring ($root, 0, mb_strlen($root) - 1) . 'ši';
         }
         else if (in_array(mb_substr($root, $lastchar, 1), self::$vowel) == false && in_array(mb_substr($root, $lastchar - 1, 1), self::$vowel) == false && in_array(mb_substr($root, $lastchar - 1, 1), self::$liquid) == false)
         {
             if (mb_strpos($root, '^') === false)
             {
-                $result = $root . "%ějši";
+                $result = $root . '%ějši';
             }
             else
             {
-                $result = $root . "%ejši";
+                $result = $root . '%ejši';
             }
         }
         else if (in_array(mb_substr($root, $lastchar - 1, 1), self::$liquid) == true && in_array(mb_substr($root, $lastchar, 1), self::$nasal) == true)
         {
-            $result = $root . "%ějši";
+            $result = $root . '%ějši';
         }
         else
         {
-            $result = $root . "ši";
+            $result = $root . 'ši';
         }
-        $result = preg_replace('/k%/', "č", $result);
-        $result = preg_replace('/g%/', "ž", $result);
-        $result = preg_replace('/h%/', "š", $result);
-        $result = preg_replace('/lši/', "ľši", $result);
-        $result = preg_replace('/gši/', "žši", $result); $result = preg_replace('/ležši/', "legši", $result);
-        $result = preg_replace('/%/', '', $result);
+        $result = str_replace('k%', 'č', $result);
+        $result = str_replace('g%', 'ž', $result);
+        $result = str_replace('h%', 'š', $result);
+        $result = str_replace('lši', 'ľši', $result);
+        $result = str_replace('gši', 'žši', $result);
+        $result = str_replace('ležši', 'legši', $result);
+        $result = str_replace('%', '', $result);
     
         return $result;
     }
 
-    static function comparative_adv ($root)
+    /**
+     * @param $root
+     * @return string
+     */
+    protected static function comparative_adv($root)
     {
         if (mb_strpos($root,'^') !== false)
         {
@@ -375,86 +497,100 @@ class Adjective
             $lastchar = mb_strlen($root) - 1;
         }
     
-        if ($root == "velik")		{ $result = "vęče"; }
-        else if ($root == "mal")	{ $result = "menje"; }
-        else if ($root == "dobr")	{ $result = "lěpje, lučše"; }
-        else if ($root == "zl")		{ $result = "gorje"; }
-        else if ($root == "mnog")	{ $result = "bolje"; }
-        else if (mb_strrpos($root, "sk") == mb_strlen($root) - 2)
+        if ($root == 'velik')		{ $result = 'vęče'; }
+        else if ($root == 'mal')	{ $result = 'menje'; }
+        else if ($root == 'dobr')	{ $result = 'lěpje, lučše'; }
+        else if ($root == 'zl')		{ $result = 'gorje'; }
+        else if ($root == 'mnog')	{ $result = 'bolje'; }
+        else if (mb_strrpos($root, 'sk') == mb_strlen($root) - 2)
         {
-            $result = "bolje " . $root . "o";
+            $result = 'bolje ' . $root . 'o';
         }
-        else if (mb_strrpos($root, "ok") == mb_strlen($root) - 2 || mb_strrpos($root, "ek") == mb_strlen($root) - 2)
+        else if (mb_strrpos($root, 'ok') == mb_strlen($root) - 2 || mb_strrpos($root, 'ek') == mb_strlen($root) - 2)
         {
-            $result = self::substring($root, 0, mb_strlen($root) - 2) . "%je";
+            $result = self::substring($root, 0, mb_strlen($root) - 2) . '%je';
         }
-        else if (mb_strrpos($root, "k") == mb_strlen($root) - 1 && in_array(mb_substr($root, $lastchar - 1, 1), self::$vowel) == false)
+        else if (mb_strrpos($root, 'k') == mb_strlen($root) - 1 && in_array(mb_substr($root, $lastchar - 1, 1), self::$vowel) == false)
         {
-            $result = self::substring($root, 0, mb_strlen($root) - 1) . "%je";
+            $result = self::substring($root, 0, mb_strlen($root) - 1) . '%je';
         }
         else if (mb_strpos($root, '^') !== false)
         {
-            $result = $root . "eje";
+            $result = $root . 'eje';
         }
         else
         {
-            $result = $root . "%ěje";
+            $result = $root . '%ěje';
         }
-        $result = preg_replace("k%ě/", "če", $result);
-        $result = preg_replace("g%ě/", "že", $result);
-        $result = preg_replace("h%ě/", "še", $result);
-        $result = preg_replace("k%j/", "kš", $result);
-        $result = preg_replace("g%j/", "gš", $result);
-        $result = preg_replace("st%j/", "šč", $result);
-        $result = preg_replace("s%j/", "š", $result);
-        $result = preg_replace("z%j/", "ž", $result);
-        $result = preg_replace("t%j/", "č", $result);
-        $result = preg_replace("d%j/", "dž", $result);
-        $result = preg_replace("%/", "", $result);
+        $result = str_replace('k%ě', 'če', $result);
+        $result = str_replace('g%ě', 'že', $result);
+        $result = str_replace('h%ě', 'še', $result);
+        $result = str_replace('k%j', 'kš', $result);
+        $result = str_replace('g%j', 'gš', $result);
+        $result = str_replace('st%j', 'šč', $result);
+        $result = str_replace('s%j', 'š', $result);
+        $result = str_replace('z%j', 'ž', $result);
+        $result = str_replace('t%j', 'č', $result);
+        $result = str_replace('d%j', 'dž', $result);
+        $result = str_replace('%', '', $result);
     
         return $result;
     }
 
-    static function superlative($root, $comp, $srt)
+    /**
+     * @param $root
+     * @param $comp
+     * @param $srt
+     * @return string
+     */
+    protected static function superlative($root, $comp, $srt)
     {
-        if ($root == "dobr" && $srt == "adj")
+        if ($root == 'dobr' && $srt == 'adj')
         {
-            $result = "najlěpši, najlučši";
+            $result = 'najlěpši, najlučši';
         }
-        else if ($root == "dobr" && $srt == "adv")
+        else if ($root == 'dobr' && $srt == 'adv')
         {
-            $result = "najlěpje, najlučše";
+            $result = 'najlěpje, najlučše';
         }
         else
         {
-            $result = "naj" . $comp;
+            $result = 'naj' . $comp;
         }
 
         return $result;
     }
 
-    static function rules($word)
+    /**
+     * @param $word
+     * @return mixed
+     */
+    protected static function rules($word)
     {
-        $word = str_replace("^o", "^e", $word);
-        $word = str_replace("^y", "^i", $word);
-        $word = str_replace("s|^e","se", $word);
-        $word = str_replace("s|^i","si", $word);
-        $word = str_replace("|", "", $word);
-        $word = str_replace("č^", "č", $word); $word = str_replace("š^", "š", $word); $word = str_replace("ž^", "ž", $word); $word = str_replace("ć^", "ć", $word); $word = str_replace("c^", "c", $word);
-        $word = str_replace("/l^/", "lj", $word); $word = str_replace("n^", "ń", $word); $word = str_replace("r^", "ŕ", $word); $word = str_replace("j^", "j", $word);
-        $word = str_replace("t^", "ť", $word); $word = str_replace("d^", "ď", $word); $word = str_replace("s^", "ś", $word); $word = str_replace("z^", "ź", $word); $word = str_replace("^", "", $word);
-        $word = str_replace("jy", "ji", $word);
-        $word = str_replace("ky", "ki", $word);
-        $word = str_replace("gy", "gi", $word);
-        $word = str_replace("hy", "hi", $word);
-        $word = str_replace("cy", "ci", $word);
+        $word = str_replace('^o', '^e', $word);
+        $word = str_replace('^y', '^i', $word);
+        $word = str_replace('s|^e','se', $word);
+        $word = str_replace('s|^i','si', $word);
+        $word = str_replace('|', '', $word);
+        $word = str_replace('č^', 'č', $word); $word = str_replace('š^', 'š', $word); $word = str_replace('ž^', 'ž', $word); $word = str_replace('ć^', 'ć', $word); $word = str_replace('c^', 'c', $word);
+        $word = str_replace('l^', 'lj', $word); $word = str_replace('n^', 'ń', $word); $word = str_replace('r^', 'ŕ', $word); $word = str_replace('j^', 'j', $word);
+        $word = str_replace('t^', 'ť', $word); $word = str_replace('d^', 'ď', $word); $word = str_replace('s^', 'ś', $word); $word = str_replace('z^', 'ź', $word); $word = str_replace('^', '', $word);
+        $word = str_replace('jy', 'ji', $word);
+        $word = str_replace('ky', 'ki', $word);
+        $word = str_replace('gy', 'gi', $word);
+        $word = str_replace('hy', 'hi', $word);
+        $word = str_replace('cy', 'ci', $word);
 
-        $word = str_replace("#", "", $word);
-
-        return $word;
+        return str_replace('#', '', $word);
     }
 
-    public static function substring($str, $from = 0, $to = false)
+    /**
+     * @param $str
+     * @param int $from
+     * @param bool $to
+     * @return string
+     */
+    protected static function substring($str, $from = 0, $to = false)
     {
         if ($to !== false)
         {
@@ -477,6 +613,7 @@ class Adjective
         }
 
         $substring = $to === false ? mb_substr($str, $from) : mb_substr($str, $from, $to - $from);
+        
         return ($substring === false) ? '' : $substring;
     }
 }
