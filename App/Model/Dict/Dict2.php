@@ -45,7 +45,7 @@ class Dict2 extends Generic
                     'mzs'   => $mzsKey,
                     'mzs2'  => trim(self::normalize($word[1]), '()'),
                     'desc'  => '',
-                    'type'  => trim($word[2], '.'),
+                    'type'  => self::normalizeType($word[2]),
                     'level' => (int) $word[4],
                     'code'  => $word[5],
                 );
@@ -53,6 +53,21 @@ class Dict2 extends Generic
         }
 
         return $words;
+    }
+
+    // n - noun, a - adjective, v - verb
+    static function normalizeType($type)
+    {
+        $type = trim($type, '.');
+
+        if ($type == 'm') return 'nm';
+        if ($type == 'f') return 'nf';
+        if ($type == 'n') return 'nn';
+        if ($type == 'adj') return 'a';
+
+        if (!mb_strlen($type)) return null;
+
+        return $type;
     }
 }
 
