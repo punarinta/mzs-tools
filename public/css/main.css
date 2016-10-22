@@ -1,3 +1,4 @@
 #dynamic-out {width: 100%; font: 18px sans-serif; border: 1px solid #ccc;padding: 5px}
 .dynamic-word {display: inline-block; background: #eee; padding: 2px 4px; margin-right: 2px; cursor: pointer}
-#translation-picker {display: none; position: absolute}
+#translation-picker, #wordform-picker {display: none; position: absolute}
+.dropdown-menu li a {display: inline-block}

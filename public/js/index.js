@@ -4,7 +4,8 @@ var translated = [];
 {
   var input = document.getElementById('dynamic-in'),
       output = document.getElementById('dynamic-out'),
-      translationPicker = document.getElementById('translation-picker');
+      translationPicker = document.getElementById('translation-picker'),
+      wordformPicker = document.getElementById('wordform-picker');
 
   input.onkeyup = function ()
   {
@@ -18,7 +19,7 @@ var translated = [];
       {
         if (translated[j].eng == word)
         {
-          found = i;
+          found = j;
           break;
         }
       }
@@ -72,7 +73,43 @@ var translated = [];
         // make a declension/conjugation request
         core.api('word', 'showForms', {word: t.dataset.mzs, type: t.dataset.type}, function (data)
         {
-          console.log(data)
+          t.classList.add('selected');
+
+          var html = '';
+
+          for (var i in data)
+          {
+            if (typeof data[i] == 'object')
+            {
+              html += '<li>';
+              for (var j in data[i])
+              {
+                if (typeof data[i][j] == 'object')
+                {
+                  for (var k in data[i][j])
+                  {
+                    html += '<a href="#" data-form="' + data[i][j][k] + '">' + data[i][j][k] + ' (' + i + '.' + j + '.' + k + ')</a>';
+                  }
+                }
+                else
+                {
+                  html += '<a href="#" data-form="' + data[i][j] + '">' + data[i][j] + ' (' + i + '.' + j + ')</a>';
+                }
+              }
+              html += '</li>';
+            }
+            else
+            {
+              html += '<li><a href="#" data-form="' + data[i] + '">' + data[i] + ' (' + i + ')</a></li>';
+            }
+          }
+
+          html += '<li class="cancel divider"></li><li><a tabindex="-1" href="#" class="remove">Remove</a></li><li><a tabindex="-1" href="#" class="cancel">Cancel</a></li>';
+
+          wordformPicker.style.display = 'block';
+          wordformPicker.style.left = e.pageX;
+          wordformPicker.style.top = e.pageY;
+          wordformPicker.querySelector('ul').innerHTML = html;
         });
       }
     }
@@ -99,6 +136,29 @@ var translated = [];
         mzs: sel.dataset.mzs,
         type: sel.dataset.type
       });
+    }
+
+    if (e.target.classList.contains('remove'))
+    {
+      sel.parentNode.removeChild(sel);
+    }
+
+    // clear item selection
+    Array.prototype.forEach.call(output.querySelectorAll('.dynamic-word'), function (el)
+    {
+      el.classList.remove('selected');
+    });
+  };
+
+  wordformPicker.onclick = function (e)
+  {
+    wordformPicker.style.display = 'none';
+
+    var sel = output.querySelector('.selected');
+
+    if (!e.target.classList.contains('cancel'))
+    {
+      sel.innerText = e.target.dataset.form;
     }
 
     if (e.target.classList.contains('remove'))
