@@ -1,3 +1,5 @@
+var translated = [];
+
 (function ()
 {
   var input = document.getElementById('dynamic-in'),
@@ -10,9 +12,26 @@
 
     for (i in words)
     {
-      var word = words[i].toLowerCase();
+      var word = words[i].toLowerCase(), found = -1;
 
-      html += '<div class="dynamic-word">' + word + '</div>';
+      for (var j = 0; j < translated.length; j++)
+      {
+        if (translated[j].eng == word)
+        {
+          found = i;
+          break;
+        }
+      }
+
+      if (found == -1)
+      {
+        html += '<div class="dynamic-word">' + word + '</div>';
+      }
+      else
+      {
+        var t = translated[found];
+        html += '<div class="dynamic-word translated" data-eng="' + t.eng + '" data-mzs="' + t.mzs + '" data-type="' + t.type + '">' + t.mzs + '</div>';
+      }
     }
 
     output.innerHTML = html;
@@ -36,7 +55,8 @@
           var html = '';
           for (var i in data)
           {
-            html += '<li><a tabindex="-1" href="#" data-mzs="' + data[i].mzs + '" data-type="' + data[i].type + '">' + data[i].mzs + '</a></li>';
+            var info = data[i].mzs + ' (' + (data[i].type || '?') + ')';
+            html += '<li><a tabindex="-1" href="#" data-eng="' + data[i].eng + '" data-mzs="' + data[i].mzs + '" data-type="' + data[i].type + '">' + info + '</a></li>';
           }
 
           html += '<li class="cancel divider"></li><li><a tabindex="-1" href="#" class="remove">Remove</a></li><li><a tabindex="-1" href="#" class="cancel">Cancel</a></li>';
@@ -66,10 +86,19 @@
 
     if (!e.target.classList.contains('cancel'))
     {
-      sel.innerText = e.target.innerText;
+      sel.innerText = e.target.dataset.mzs;
       sel.classList.add('translated');
+      sel.dataset.eng = e.target.dataset.eng.replace(/([^a-zA-Z]+)/g, '').toLowerCase();
       sel.dataset.mzs = e.target.dataset.mzs;
       sel.dataset.type = e.target.dataset.type;
+
+      // TODO: do not push duplicates
+      translated.push(
+      {
+        eng: sel.dataset.eng,
+        mzs: sel.dataset.mzs,
+        type: sel.dataset.type
+      });
     }
 
     if (e.target.classList.contains('remove'))
