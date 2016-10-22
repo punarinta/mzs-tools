@@ -51,7 +51,7 @@ class Word extends Generic
         {
             $res = Noun::morph($word, mb_substr($type, 1, 1));
         }
-        if (mb_substr($type, 0, 1) == 'a')
+        if ($type == 'a')
         {
             $res = Adjective::morph($word);
         }
