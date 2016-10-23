@@ -4,9 +4,23 @@ namespace App\Controller;
 
 class Index
 {
-    static function index()
+    static function translate()
     {
-        $content = \View::make('index');
-        \View::html('container', ['content' => $content, 'js' => ['js/index']]);
+        \View::html('container',
+        [
+            'page'      => 'translate',
+            'content'   => \View::make('translate'),
+            'js'        => ['js/translate'],
+        ]);
+    }
+
+    static function stash()
+    {
+        \View::html('container',
+        [
+            'page'      => 'stash',
+            'content'   => \View::make('stash'),
+            'js'        => ['js/stash'],
+        ]);
     }
 }

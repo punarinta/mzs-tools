@@ -19,7 +19,7 @@ class Error
      *
      * @param $exception
      */
-    static function errRuntime($exception)
+    static function errRuntime(\Exception $exception)
     {
         \View::html('container', ['content' => \View::make('error-500', ['message' => $exception->getMessage()])]);
     }

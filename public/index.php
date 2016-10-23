@@ -77,8 +77,6 @@ spl_autoload_register(function ($class) use ($autoClasses0, $autoClasses4, $load
         }
     }
 
-    // Remember that this class does not exist.
-    // return $manualClasses[$class] = false;
     return false;
 
 }, true, true);
@@ -87,9 +85,9 @@ unset ($autoClasses0, $autoClasses4, $loaderClassMap);
 
 $GLOBALS['-R'] =
 [
-    'home' => ['/', '\App\Controller\Index', 'index'],
+    'translate' => ['/', '\App\Controller\Index', 'translate'],
+    'stash' => ['/stash', '\App\Controller\Index', 'stash'],
     'api-word' => ['/api/word', '\App\Controller\Api\Word', 'index'],
 ];
 
 return \Sys::run(require_once 'App/config.php');
-
